@@ -27,7 +27,9 @@ void add_polygon( struct matrix *polygons,
 		  double x0, double y0, double z0, 
 		  double x1, double y1, double z1, 
 		  double x2, double y2, double z2 ) {
-  add_point
+  add_point(polygons, x0, y0, z0);
+  add_point(polygons, x1, y1, z1);
+  add_point(polygons, x2, y2, z2); 
 }
 
 /*======== void draw_polygons() ==========
@@ -40,6 +42,29 @@ lines connecting each points to create bounding
 triangles
 ====================*/
 void draw_polygons( struct matrix *polygons, screen s, color c ) {
+  if (points->lastcol < 3){
+    printf("Need at least points to draw a polygon!\n");
+    return;
+  }
+
+  int point;
+  for (point = 0; point < points->lastcol-1; point += 3){
+    drawline( points->m[0][points],
+	      points->m[1][points],
+	      points->m[0][points+1],
+	      points->m[1][points+1],
+	      s,c);
+    drawline( points->m[0][points+2],
+	      points->m[1][points+2],
+	      points->m[0][points+1],
+	      points->m[1][points+1],
+	      s,c);
+    drawline( points->m[0][points],
+	      points->m[1][points],
+	      points->m[0][points+2],
+	      points->m[1][points+2],
+	      s,c);	      
+  }
 }
 
 
@@ -68,17 +93,7 @@ void add_box( struct matrix * edges,
   z0 = z;
   z1 = z-depth;
 
-  //front
-  add_edge(edges, x0, y0, z0, x0+2, y0+2, z0+2);
-  add_edge(edges, x1, y0, z0, x1+2, y0+2, z0+2);
-  add_edge(edges, x1, y1, z0, x1+2, y1+2, z0+2);
-  add_edge(edges, x0, y1, z0, x0+2, y1+2, z0+2);
-
-  //back
-  add_edge(edges, x0, y0, z1, x0+2, y0+2, z1+2);
-  add_edge(edges, x1, y0, z1, x1+2, y0+2, z1+2);
-  add_edge(edges, x1, y1, z1, x1+2, y1+2, z1+2);
-  add_edge(edges, x0, y1, z1, x0+2, y1+2, z1+2);
+  add_polygon(edges, 
 }
 
 /*======== void add_sphere() ==========
